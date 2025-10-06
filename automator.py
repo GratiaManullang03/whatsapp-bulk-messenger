@@ -7,6 +7,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 from urllib.parse import quote
 import os
+import sys
+from blacklist import filter_blacklisted_numbers, move_to_blacklist
 
 options = Options()
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
@@ -38,6 +40,14 @@ print("*****                                               ******")
 print("**********************************************************")
 print("**********************************************************")
 print(style.RESET)
+
+# Check blacklist before proceeding
+print(style.CYAN + "\n🔍 Checking blacklist..." + style.RESET)
+filtered_contacts, removed_count, all_blacklisted = filter_blacklisted_numbers()
+
+if all_blacklisted:
+    print(style.RED + "\n❌ Process terminated. All numbers are blacklisted." + style.RESET)
+    sys.exit(0)
 
 f = open("message.txt", "r", encoding="utf8")
 message = f.read()
@@ -98,4 +108,13 @@ for idx, contact in enumerate(contacts):
 					print(style.GREEN + 'Message sent to: ' + number + style.RESET)
 	except Exception as e:
 		print(style.RED + 'Failed to send message to ' + number + str(e) + style.RESET)
+
+# Close browser
 driver.close()
+
+# Move all sent numbers to blacklist
+print(style.CYAN + "\n📝 Moving sent numbers to blacklist..." + style.RESET)
+move_to_blacklist()
+
+print(style.GREEN + "\n✅ Blast completed successfully!" + style.RESET)
+print(style.BLUE + "**********************************************************" + style.RESET)

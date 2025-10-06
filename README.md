@@ -7,6 +7,7 @@ WhatsApp Bulk Messenger automates sending of messages via WhatsApp Web. The tool
 ✅ **Bulk Messaging** - Send messages to multiple contacts automatically
 ✅ **Message Personalization** - Use `{name}` placeholder to personalize messages
 ✅ **Contact Names** - Support for format: `number - name` in numbers list
+✅ **Blacklist System** - Prevent duplicate messages to same contacts automatically
 ✅ **Auto Retry** - Automatically retries failed messages up to 3 times
 ✅ **Updated Dependencies** - Compatible with latest Selenium 4.x and Chrome
 ✅ **Modern WhatsApp Web Support** - Updated selectors for current WhatsApp Web interface
@@ -104,6 +105,60 @@ The program will show:
 - Indonesia: `62` + number without `0`
 - Example: `0812-3456-7890` → `628123456790`
 
+## Blacklist System
+
+The blacklist feature automatically prevents sending duplicate messages to the same contacts. This is useful to avoid spam and respect your contacts.
+
+### How It Works
+
+1. **Before Blast**: Program checks `blacklist.txt` and removes any blacklisted numbers from `numbers.txt`
+2. **During Blast**: Messages are sent to remaining contacts
+3. **After Blast**: All sent numbers are automatically moved to `blacklist.txt` and removed from `numbers.txt`
+
+### Files
+
+- **`numbers.txt`** - Your current blast list (cleared after each blast)
+- **`blacklist.txt`** - Historical record of all contacted numbers (auto-managed)
+
+### Example Flow
+
+**Initial state:**
+```
+numbers.txt:
+628123456789 - John
+628987654321 - Jane
+
+blacklist.txt:
+(empty)
+```
+
+**After first blast:**
+```
+numbers.txt:
+(empty - cleared automatically)
+
+blacklist.txt:
+628123456789 - John
+628987654321 - Jane
+```
+
+**If you add John again:**
+```
+numbers.txt:
+628123456789 - John  ← Will be removed automatically before blast
+628111222333 - Mike
+
+Result: Only Mike receives the message
+```
+
+### Manual Blacklist Management
+
+You can manually edit `blacklist.txt`:
+- **Add numbers** to prevent messaging them
+- **Remove numbers** to allow messaging them again
+
+**Note:** If ALL numbers in `numbers.txt` are blacklisted, the program will abort with an error message.
+
 ## Changelog
 
 ### Recent Updates (2025)
@@ -115,6 +170,10 @@ The program will show:
 - Updated dependencies to support modern Python versions
 
 **✨ New Features:**
+- **Blacklist System**: Automatically prevents duplicate messages to same contacts
+  - Auto-removes blacklisted numbers before blast
+  - Auto-moves sent numbers to blacklist after blast
+  - Protects against accidental spam
 - **Personalized Messages**: Use `{name}` placeholder in messages
 - **Contact Names**: Support `number - name` format in numbers.txt
 - **Better Error Handling**: Improved retry mechanism with clearer error messages

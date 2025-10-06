@@ -1,4 +1,4 @@
-Hello World,
+Hello {name},
 
 This is my text to you from automated messaging system.
 
